@@ -1062,7 +1062,8 @@ void BindAnalysisPredictor(py::module *m) {
       .def(
           "run",
           [](AnalysisPredictor &self, const std::vector<PaddleTensor> &inputs) {
-            std::vector<PaddleTensor> outputs;
+	     pybind11::gil_scoped_release release;
+	     std::vector<PaddleTensor> outputs;
             self.Run(inputs, &outputs);
             return outputs;
           })
@@ -1112,14 +1113,19 @@ void BindPaddleInferPredictor(py::module *m) {
       .def(
           "run",
           [](paddle_infer::Predictor &self, py::handle py_in_tensor_list) {
-            auto in_tensor_list =
+	     pybind11::gil_scoped_release release;
+	     auto in_tensor_list =
                 CastPyArg2VectorOfTensor(py_in_tensor_list.ptr(), 0);
             std::vector<paddle::Tensor> outputs;
             self.Run(in_tensor_list, &outputs);
             return py::handle(ToPyObject(outputs));
           },
           py::arg("inputs"))
-      .def("run", [](paddle_infer::Predictor &self) { self.Run(); })
+      .def("run",
+	    [](paddle_infer::Predictor &self) {
+	       pybind11::gil_scoped_release release;
+	       self.Run();
+	    })
       .def("clone",
            [](paddle_infer::Predictor &self) { return self.Clone(nullptr); })
 #if defined(PADDLE_WITH_CUDA) || defined(PADDLE_WITH_HIP)
