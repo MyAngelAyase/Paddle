@@ -90,17 +90,17 @@ class CustomDevice : public DeviceInterface {
       C_Device_st device;
       device.id = dev_id;
       devices_pool[dev_id] = device;
-      InitDevice(dev_id);
+      // InitDevice(dev_id);
     }
   }
 
   void Finalize() override {
-    auto devices = GetDeviceList();
-    for (auto dev_id : devices) {
-      // SetDevice(dev_id);
-      // SynchronizeDevice(dev_id);
-      DeInitDevice(dev_id);
-    }
+    // auto devices = GetDeviceList();
+    // for (auto dev_id : devices) {
+    //   // SetDevice(dev_id);
+    //   // SynchronizeDevice(dev_id);
+    //   DeInitDevice(dev_id);
+    // }
 
     bool ok = true;
     if (pimpl_->finalize && pimpl_->finalize() != C_SUCCESS) {

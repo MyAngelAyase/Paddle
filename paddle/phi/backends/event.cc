@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <mutex>
 #include "paddle/phi/backends/event.h"
 
 #include "glog/logging.h"
@@ -49,7 +50,8 @@ bool Event::Init(const Place& place, Flag flags) {
 }
 
 void Event::Destroy() {
-  if (own_data_) {
+    if (own_data_ &&
+        phi::DeviceManager::HasDeviceType(place_.GetDeviceType())) {
     phi::DeviceManager::SetDevice(place_);
     device_->DestroyEvent(this);
     own_data_ = false;
