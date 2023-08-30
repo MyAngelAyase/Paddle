@@ -308,7 +308,7 @@ void ComputeInterceptor::RunOps() {
   } else {
     for (auto op : node_->ops()) {
       op->Run(*microbatch_scopes_[cur_scope_id_], place_);
-      if (gc_) {
+      if (gc_ && op->Type() != "while") {
         framework::DeleteUnusedTensors(*microbatch_scopes_[cur_scope_id_],
                                        op,
                                        node_->unused_vars(),
