@@ -173,7 +173,7 @@ class WhileOp : public framework::OperatorBase {
                       platform::errors::PreconditionNotMet(
                           "The Output(StepScope) of WhileOp should be empty."));
 
-    bool cond_data = GetCondData(cond);
+    bool cond_data = true;
     auto &skip_vars = Attr<std::vector<std::string>>(kSkipEagerDeletionVars);
     VLOG(2) << GetSkipEagerDeletionVarsDebugString(skip_vars);
 
@@ -276,7 +276,9 @@ class WhileOp : public framework::OperatorBase {
         }
         current_scope = cached_inference_scope_;
       }
-
+      char* str_times = getenv("PADDLE_TOKENS")
+      int times = atoi(str_times)
+      int i = 1;
       while (cond_data) {
         for (auto &name : current_scope->LocalVarNames()) {
           auto *var = current_scope->Var(name);
@@ -294,8 +296,11 @@ class WhileOp : public framework::OperatorBase {
 
         core_->Run({}, false);
 
-        cond_data = GetCondData(
-            scope.FindVar(Input(kCondition))->Get<phi::DenseTensor>());
+        i++;
+        if(i >= times){
+          cond_data = false;
+        }
+        
       }
 
       if (!FLAGS_cache_inference_while_scope) {
